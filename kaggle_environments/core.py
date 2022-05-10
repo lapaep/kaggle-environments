@@ -297,7 +297,7 @@ class Environment:
             for i in range(len(self.state)):
                 self.state[i].status = statuses[i]
         return self.state
-
+    
     def render(self, **kwargs):
         """
         Renders a visual representation of the current state of the environment.
@@ -318,6 +318,30 @@ class Environment:
                 return out
         elif mode == "html" or mode == "ipython":
             is_playing = get(kwargs, bool, self.done, path=["playing"])
+            
+
+            agents = [
+            Agent(agent, self)
+            if agent is not None
+            else None
+            for agent in self.info["agents"]
+            ]
+
+            agent_list = []
+            enumerate
+            for (i,agent) in enumerate(agents):
+                agent_list.append({
+                    #"builtin_agents" : agent.builtin_agents,
+                    "configuration" : agent.configuration,
+                    "debug" : agent.debug,
+                    "environment_name" : agent.environment_name,
+                    "raw" : agent.raw,
+                    "is_parallelizable" : agent.is_parallelizable,
+                    "id" : i,
+                    "index" : i,
+                    "name" : self.info["legend"][i]
+                })
+
             window_kaggle = {
                 "debug": get(kwargs, bool, self.debug, path=["debug"]),
                 "playing": is_playing,
@@ -325,11 +349,16 @@ class Environment:
                 "controls": get(kwargs, bool, self.done, path=["controls"]),
                 "environment": self.toJSON(),
                 "logs": self.logs,
+                "agents": agent_list,
                 **kwargs,
             }
+           
             args = [self]
+            
+            
             player_html = get_player(window_kaggle,
                                      self.html_renderer(*args[:self.html_renderer.__code__.co_argcount]))
+
             if mode == "html":
                 return player_html
 
@@ -343,6 +372,8 @@ class Environment:
             return json.dumps(self.toJSON(), sort_keys=True, indent=2 if self.debug else None)
         else:
             raise InvalidArgument("Available render modes: human, ansi, html, ipython")
+
+
 
     def play(self, agents=None, **kwargs):
         """
