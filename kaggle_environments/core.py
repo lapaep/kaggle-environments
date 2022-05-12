@@ -322,10 +322,11 @@ class Environment:
 
             agents = [
             Agent(agent, self)
-            if agent is not None
-            else None
+            #if agent is not None
+            #else None
             for agent in self.info["agents"]
             ]
+            print(self.info['agents'])
 
             agent_list = []
             enumerate
